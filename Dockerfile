@@ -1,6 +1,9 @@
 FROM alpine:3.12.0 as builder
 
 RUN apk add --no-cache --virtual build-dependencies \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
     git \
     build-base \
     tk-dev \
@@ -18,6 +21,9 @@ RUN make install
 FROM alpine:3.12.0
 
 RUN apk add --no-cache --virtual runtime-dependencies \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
     tcl \
     tk \
     xf86-video-dummy \
