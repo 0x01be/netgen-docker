@@ -18,7 +18,7 @@ RUN ./configure --prefix=/opt/netgen/
 RUN make
 RUN make install
 
-FROM alpine:3.12.0
+FROM 0x01be/xpra
 
 RUN apk add --no-cache --virtual runtime-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
@@ -26,15 +26,14 @@ RUN apk add --no-cache --virtual runtime-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
     tcl \
     tk \
-    xf86-video-dummy \
-    xorg-server \
-    bash
-
-COPY ./xorg.conf /xorg.conf
-#Xorg -noreset +extension GLX +extension RANDR +extension RENDER -logfile ./0.log -config ./xorg.conf :0
-#ENV DISPLAY :0
+    bash \
+    gtk+3.0
 
 COPY --from=builder /opt/netgen/ /opt/netgen/
 
 ENV PATH /opt/netgen/bin/:$PATH
+
+EXPOSE 10000
+
+CMD /usr/bin/xpra start --bind-tcp=0.0.0.0:10000 --html=on --start-child=netgen --exit-with-children --daemon=no --xvfb="/usr/bin/Xvfb +extension  Composite -screen 0 1920x1080x24+32 -nolisten tcp -noreset" --pulseaudio=no --notifications=no --bell=no --mdns=no:
 
