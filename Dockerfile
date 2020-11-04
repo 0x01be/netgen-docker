@@ -1,4 +1,4 @@
-FROM 0x01be/alpine:edge as builder
+FROM alpine as build
 
 RUN apk add --no-cache --virtual netgen-build-dependencies \
     git \
@@ -7,7 +7,8 @@ RUN apk add --no-cache --virtual netgen-build-dependencies \
     m4 \
     python3-dev
 
-RUN git clone git://opencircuitdesign.com/netgen /netgen
+ENV REVISION master
+RUN git clone --depth 1 --branch ${REVISION} git://opencircuitdesign.com/netgen /netgen
 
 WORKDIR /netgen
 
@@ -25,9 +26,6 @@ RUN apk add --no-cache --virtual netgen-runtime-dependencies \
 
 COPY --from=builder /opt/netgen/ /opt/netgen/
 
-ENV PATH /opt/netgen/bin/:$PATH
-
-EXPOSE 10000
-
-CMD /usr/bin/xpra start --bind-tcp=0.0.0.0:10000 --html=on --start-child=netgen --exit-with-children --daemon=no --xvfb="/usr/bin/Xvfb +extension  Composite -screen 0 1920x1080x24+32 -nolisten tcp -noreset" --pulseaudio=no --notifications=no --bell=no --mdns=no:
+ENV USER=${USER} \
+    PATH ${PATH}:/opt/netgen/bin/
 
