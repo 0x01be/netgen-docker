@@ -7,7 +7,7 @@ RUN apk add --no-cache --virtual netgen-build-dependencies \
     m4 \
     python3-dev
 
-ENV REVISION master
+ENV REVISION=master
 RUN git clone --depth 1 --branch ${REVISION} git://opencircuitdesign.com/netgen /netgen
 
 WORKDIR /netgen
@@ -21,11 +21,11 @@ FROM 0x01be/xpra
 RUN apk add --no-cache --virtual netgen-runtime-dependencies \
     tcl \
     tk \
-    bash \
-    gtk+3.0
+    bash
 
-COPY --from=builder /opt/netgen/ /opt/netgen/
+COPY --from=build /opt/netgen/ /opt/netgen/
 
-ENV USER=${USER} \
-    PATH ${PATH}:/opt/netgen/bin/
+USER ${USER}
+ENV PATH=${PATH}:/opt/netgen/bin \
+    COMMAND=netgen
 
