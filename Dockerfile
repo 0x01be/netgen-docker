@@ -1,4 +1,4 @@
-FROM alpine as build
+FROM 0x01be/base as build
 
 RUN apk add --no-cache --virtual netgen-build-dependencies \
     git \
